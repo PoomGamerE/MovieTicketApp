@@ -70,7 +70,12 @@ public class FileService implements Service {
                 System.out.println("File created: " + file.getName());
                 saveToFile();
             }
-        } catch (Exception e) {
+        } catch (IOException e){
+            System.out.println("An error occurred while creating the file.");
+            System.out.println("Please Move Location of file to another path");
+            System.exit(0);
+        }
+        catch (Exception e) {
             System.out.println("An error occurred while creating the file.");
             e.printStackTrace();
         }
