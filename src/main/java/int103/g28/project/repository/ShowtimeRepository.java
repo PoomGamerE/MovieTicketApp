@@ -5,10 +5,11 @@ import int103.g28.project.exception.ShowtimeNotFoundException;
 import int103.g28.project.object.Seat;
 import int103.g28.project.object.Showtime;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShowtimeRepository {
+public class ShowtimeRepository implements Serializable {
     private Map<String, Showtime> showtimes;
 
     // Constructor

@@ -4,10 +4,11 @@ import int103.g28.project.exception.MovieAlreadyException;
 import int103.g28.project.exception.MovieNotFoundException;
 import int103.g28.project.object.Movie;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MovieRepository {
+public class MovieRepository implements Serializable {
     private Map<String, Movie> movies;
 
     // Constructor

@@ -4,10 +4,11 @@ import int103.g28.project.exception.TicketAlreadyException;
 import int103.g28.project.exception.TicketNotFoundException;
 import int103.g28.project.object.Ticket;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TicketRepository {
+public class TicketRepository implements Serializable {
     private Map<String, Ticket> tickets;
 
     // Constructor
