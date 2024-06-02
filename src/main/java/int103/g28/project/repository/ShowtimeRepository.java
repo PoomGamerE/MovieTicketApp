@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ShowtimeRepository implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Map<String, Showtime> showtimes;
 
     // Constructor

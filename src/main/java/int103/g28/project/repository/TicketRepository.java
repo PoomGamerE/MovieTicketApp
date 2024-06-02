@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TicketRepository implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Map<String, Ticket> tickets;
 
     // Constructor
