@@ -1,8 +1,10 @@
 package int103.g28.project.object;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Ticket {
+public class Ticket implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String ticketid;
     private Showtime showtime;
     private Seat seats;

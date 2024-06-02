@@ -1,8 +1,10 @@
 package int103.g28.project.object;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Showtime {
+public class Showtime implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String showtimeid;
     private String theater;
     private Movie movie;

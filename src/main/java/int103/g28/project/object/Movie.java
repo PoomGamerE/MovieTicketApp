@@ -1,8 +1,10 @@
 package int103.g28.project.object;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Movie {
+public class Movie implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String movieid;
     private String title;
     private String duration;
