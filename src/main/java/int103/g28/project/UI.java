@@ -390,7 +390,6 @@ public class UI {
 
         Movie movie = service.findMovies(movieId);
 
-        //check if movie is use in any showtime
         if (service.checkMovieInShowtime(movieId)) {
             System.out.println("Movie is used in showtime. Cannot be removed.");
         } else {
@@ -831,7 +830,7 @@ public class UI {
                 }
             }
         }
-        
+
         buyTicket(showtimeId);
     }
 
