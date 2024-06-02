@@ -4,7 +4,10 @@ import int103.g28.project.object.Movie;
 import int103.g28.project.object.Seat;
 import int103.g28.project.object.Showtime;
 import int103.g28.project.object.Ticket;
+import int103.g28.project.service.FileService;
 import int103.g28.project.service.InMemoryService;
+import int103.g28.project.service.JdbcService;
+import int103.g28.project.service.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +15,7 @@ import java.util.Scanner;
 
 public class UI {
     private static Scanner scanner = new Scanner(System.in);
-    private static InMemoryService service;
+    private static Service service;
 
     public static void main(String[] args) {
         selectstorage();
@@ -44,11 +47,11 @@ public class UI {
                 System.out.println("You have selected In-memory as the storage.");
                 break;
             case 2:
-                // service = new FileService();
+                service = new FileService();
                 System.out.println("You have selected File as the storage.");
                 break;
             case 3:
-                // service = new JdbcService();
+                //service = new JdbcService();
                 System.out.println("You have selected JDBC as the storage.");
                 break;
         }
