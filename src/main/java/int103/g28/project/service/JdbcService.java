@@ -23,7 +23,7 @@ public class JdbcService implements Service {
     // Database connection parameters
     private static final String JDBC_URL = "jdbc:mysql://int103g28-int103g28.f.aivencloud.com:12917/int103";
     private static final String JDBC_USER = "avnadmin";
-    private static final String JDBC_PASSWORD = "";
+    private static final String JDBC_PASSWORD = "AVNS_xZ6CQNAfHG1K7lPMpvi";
     private static final String JDBC_DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver";
 
     public JdbcService() {
