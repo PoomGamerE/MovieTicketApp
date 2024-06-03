@@ -51,7 +51,7 @@ public class UI {
                 System.out.println("You have selected File as the storage.");
                 break;
             case 3:
-                //service = new JdbcService();
+                service = new JdbcService();
                 System.out.println("You have selected JDBC as the storage.");
                 break;
         }
@@ -83,7 +83,7 @@ public class UI {
 
         switch (mode) {
             case 1:
-                showAdminMenu();
+                login();
                 break;
             case 2:
                 showUserMenu();
@@ -96,7 +96,7 @@ public class UI {
 
     // Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone
 
-    /*public static void login(){
+    public static void login(){
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
 
@@ -104,16 +104,16 @@ public class UI {
         char[] password = System.console().readPassword();
 
         if (authenticate(username, password)) {
-            showAdminMenu(service);
+            showAdminMenu();
         } else {
-            showUserMenu(service);
+            mainmenu();
         }
     }
 
     private static boolean authenticate(String username, char[] password) {
         // Simplified authentication logic
         return "admin".equals(username) && "password".equals(new String(password));
-    }*/
+    }
 
     public static void showAdminMenu() {
         System.out.println("\n");
