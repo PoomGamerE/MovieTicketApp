@@ -8,6 +8,7 @@ import int103.g28.project.repository.MovieRepository;
 import int103.g28.project.repository.ShowtimeRepository;
 import int103.g28.project.repository.TicketRepository;
 
+import java.io.*;
 import java.sql.*;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public class JdbcService implements Service {
     // Load data from database
     private void loadFromDB() {
         try (Connection conn = connect()) {
-            //Check if tables not exist
+            // Check if tables not exist
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute("CREATE TABLE IF NOT EXISTS movies (movieid VARCHAR(10) PRIMARY KEY, title VARCHAR(100), duration VARCHAR(10), genre VARCHAR(50), subtitle VARCHAR(100))");
                 stmt.execute("CREATE TABLE IF NOT EXISTS showtimes (showtimeid VARCHAR(10) PRIMARY KEY, theater VARCHAR(50), movie BLOB, language VARCHAR(20), time VARCHAR(20), seats BLOB)");
@@ -74,7 +75,9 @@ public class JdbcService implements Service {
             try (Statement stmt = conn.createStatement();
                  ResultSet rs = stmt.executeQuery("SELECT * FROM showtimes")) {
                 while (rs.next()) {
-                    Showtime showtime = new Showtime(rs.getString("showtimeid"), rs.getString("theater"), (Movie) rs.getObject("movie"), rs.getString("language"), rs.getString("time"), (Map<String, Seat>) rs.getObject("seats"));
+                    Movie movie = deserialize(rs.getBytes("movie"));
+                    Map<String, Seat> seats = deserialize(rs.getBytes("seats"));
+                    Showtime showtime = new Showtime(rs.getString("showtimeid"), rs.getString("theater"), movie, rs.getString("language"), rs.getString("time"), seats);
                     showtimeRepository.add(showtime);
                     showtimeid = Integer.parseInt(rs.getString("showtimeid"));
                 }
@@ -84,7 +87,9 @@ public class JdbcService implements Service {
             try (Statement stmt = conn.createStatement();
                  ResultSet rs = stmt.executeQuery("SELECT * FROM tickets")) {
                 while (rs.next()) {
-                    Ticket ticket = new Ticket(rs.getString("ticketid"), (Showtime) rs.getObject("showtime"), (Seat) rs.getObject("seats"));
+                    Showtime showtime = deserialize(rs.getBytes("showtime"));
+                    Seat seat = deserialize(rs.getBytes("seats"));
+                    Ticket ticket = new Ticket(rs.getString("ticketid"), showtime, seat);
                     ticketRepository.add(ticket);
                     ticketid = Integer.parseInt(rs.getString("ticketid"));
                 }
@@ -93,6 +98,17 @@ public class JdbcService implements Service {
             e.printStackTrace();
         }
     }
+
+    private <T> T deserialize(byte[] data) {
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
+             ObjectInputStream ois = new ObjectInputStream(bais)) {
+            return (T) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     // Save data to database
     private void saveToDB() {
@@ -119,10 +135,10 @@ public class JdbcService implements Service {
                 for (Showtime showtime : showtimeRepository.getAll().values()) {
                     pstmt.setString(1, showtime.getShowtimeid());
                     pstmt.setString(2, showtime.getTheater());
-                    pstmt.setObject(3, showtime.getMovie());
+                    pstmt.setBytes(3, serialize(showtime.getMovie()));
                     pstmt.setString(4, showtime.getLanguage());
                     pstmt.setString(5, showtime.getTime());
-                    pstmt.setObject(6, showtime.getSeats());
+                    pstmt.setBytes(6, serialize(showtime.getSeats()));
                     pstmt.addBatch();
                 }
                 pstmt.executeBatch();
@@ -133,8 +149,8 @@ public class JdbcService implements Service {
                     "INSERT INTO tickets (ticketid, showtime, seats) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE showtime=VALUES(showtime), seats=VALUES(seats)")) {
                 for (Ticket ticket : ticketRepository.getTickets().values()) {
                     pstmt.setString(1, ticket.getTicketid());
-                    pstmt.setObject(2, ticket.getShowtime());
-                    pstmt.setObject(3, ticket.getSeats());
+                    pstmt.setBytes(2, serialize(ticket.getShowtime()));
+                    pstmt.setBytes(3, serialize(ticket.getSeats()));
                     pstmt.addBatch();
                 }
                 pstmt.executeBatch();
@@ -143,6 +159,17 @@ public class JdbcService implements Service {
             conn.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private byte[] serialize(Object obj) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutputStream out = new ObjectOutputStream(bos)) {
+            out.writeObject(obj);
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
