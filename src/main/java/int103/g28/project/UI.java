@@ -97,6 +97,15 @@ public class UI {
     // Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone
 
     public static void login(){
+        if (System.console() == null) {
+            System.out.println("Console is not available. Returning to main menu. auto in 3 Seconds.");
+            try {
+                Thread.sleep(3000);
+            } catch (Exception e) {
+            }
+            mainmenu();
+        }
+
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
 
