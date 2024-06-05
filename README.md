@@ -54,9 +54,6 @@ The Movie Showtime Management System is a simple console-based Java application 
 ### `UI.java`
 The main user interface class that handles admin and user interactions through console input.
 
-### `Service.java`
-Handles the business logic and operations related to movies, showtimes, and tickets.
-
 ### `Movie.java`
 Represents a movie with attributes like title, genre, duration, and subtitle.
 
@@ -68,9 +65,6 @@ Represents a ticket with attributes like showtime and seat.
 
 ### `Seat.java`
 Represents a seat with attributes like seat ID, and booking status.
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 This project is licensed under the DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE - see the [LICENSE](LICENSE) file for details.
