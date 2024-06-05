@@ -19,10 +19,6 @@ public class InMemoryTicketRepository implements TicketRepository, Serializable 
         this.tickets = new HashMap<>();
     }
 
-    public InMemoryTicketRepository(Map<String, Ticket> tickets) {
-        this.tickets = tickets;
-    }
-
     //check if ticket already exists
     @Override
     public boolean check(Ticket ticket) {

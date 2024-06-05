@@ -19,10 +19,6 @@ public class InMemoryMovieRepository implements MovieRepository, Serializable {
         this.movies = new HashMap<>();
     }
 
-    public InMemoryMovieRepository(Map<String, Movie> movies) {
-        this.movies = movies;
-    }
-
     //check if movie already exists
     @Override
     public boolean check(Movie movie) {
