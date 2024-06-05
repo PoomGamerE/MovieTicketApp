@@ -832,6 +832,7 @@ public class UI {
         System.out.println("***** Showtime of the movie *****");
         System.out.println("--------------------------");
 
+        int count = 0;
         if (showtimeService.getShowtimes().isEmpty()) {
             System.out.println("No showtimes found.");
             System.out.println("Please contact the staff.");
@@ -839,20 +840,24 @@ public class UI {
             // using for-each loop for iteration over Map.entrySet()
             for (Map.Entry<String, Showtime> entry : showtimeService.getShowtimes().entrySet()) {
                 if (movieService.equalsMovie(movieService.findMovies(movieid), entry.getValue().getMovie())) {
-                    if (entry.getKey().isEmpty()){
-                        System.out.println("No showtimes found.");
-                        System.out.println("Please contact the staff.");
-                        System.out.println("System: Back to menu automatically in 3 Seconds.");
-                        try {
-                            Thread.sleep(3000);
-                        } catch (Exception e) {
-                        }
-                        showUserMenu();
-                    }
                     System.out.println("(" + entry.getKey() + ") Theater " + entry.getValue().getTheater() + " - [" + entry.getValue().getLanguage() + "] - Time: " + entry.getValue().getTime());
+                    count++;
                 }
             }
         }
+
+        if (count == 0){
+            System.out.println("No showtimes found.");
+            System.out.println("Please contact the staff.");
+            System.out.println("System: Back to menu automatically in 3 Seconds.");
+            try {
+                Thread.sleep(3000);
+            } catch (Exception e) {
+            }
+            showUserMenu();
+        }
+
+
         System.out.println("--------------------------");
         System.out.println("\n");
         System.out.println("Enter number the showtime you want to watch: ");
