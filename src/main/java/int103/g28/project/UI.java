@@ -12,6 +12,7 @@ import int103.g28.project.service.TicketService;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
 public class UI {
     private static Scanner scanner = new Scanner(System.in);
     private static MovieService movieService;
@@ -56,8 +57,10 @@ public class UI {
                 System.out.println("You have selected File as the storage.");
                 break;
             case 3:
-                selectstorage();
-                //System.out.println("You have selected JDBC as the storage.");
+                movieService = new MovieService(new JdbcMovieRepository());
+                showtimeService = new ShowtimeService(new JdbcShowtimeRepository();
+                ticketService = new TicketService(new JdbcTicketRepository();
+                System.out.println("You have selected JDBC as the storage.");
                 break;
         }
     }
@@ -101,7 +104,7 @@ public class UI {
 
     // Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone ---- Admin Zone
 
-    public static void login(){
+    public static void login() {
         if (System.console() == null) {
             System.out.println("Console is not available. Returning to main menu. auto in 3 Seconds.");
             try {
@@ -120,7 +123,7 @@ public class UI {
         if (authenticate(username, password)) {
             showAdminMenu();
         } else {
-            System.out.print("Wrong password");
+            System.out.print("Username or password is incorrect. Please try again.");
             mainmenu();
         }
     }
@@ -846,7 +849,7 @@ public class UI {
             }
         }
 
-        if (count == 0){
+        if (count == 0) {
             System.out.println("No showtimes found.");
             System.out.println("Please contact the staff.");
             System.out.println("System: Back to menu automatically in 3 Seconds.");
