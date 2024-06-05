@@ -1,21 +1,24 @@
 package int103.g28.project;
 
-import int103.g28.project.object.Movie;
-import int103.g28.project.object.Seat;
-import int103.g28.project.object.Showtime;
-import int103.g28.project.object.Ticket;
-import int103.g28.project.service.FileService;
-import int103.g28.project.service.InMemoryService;
-import int103.g28.project.service.JdbcService;
-import int103.g28.project.service.Service;
+import int103.g28.project.domain.Movie;
+import int103.g28.project.domain.Seat;
+import int103.g28.project.domain.Showtime;
+import int103.g28.project.domain.Ticket;
+import int103.g28.project.repository.InMemoryMovieRepository;
+import int103.g28.project.repository.InMemoryShowtimeRepository;
+import int103.g28.project.repository.InMemoryTicketRepository;
+import int103.g28.project.service.MovieService;
+import int103.g28.project.service.ShowtimeService;
+import int103.g28.project.service.TicketService;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-
 public class UI {
     private static Scanner scanner = new Scanner(System.in);
-    private static Service service;
+    private static MovieService movieService;
+    private static ShowtimeService showtimeService;
+    private static TicketService ticketService;
 
     public static void main(String[] args) {
         selectstorage();
@@ -43,16 +46,18 @@ public class UI {
 
         switch (repoType) {
             case 1:
-                service = new InMemoryService();
+                movieService = new MovieService(new InMemoryMovieRepository());
+                showtimeService = new ShowtimeService(new InMemoryShowtimeRepository());
+                ticketService = new TicketService(new InMemoryTicketRepository());
                 System.out.println("You have selected In-memory as the storage.");
                 break;
             case 2:
-                service = new FileService();
-                System.out.println("You have selected File as the storage.");
+                selectstorage();
+                //System.out.println("You have selected File as the storage.");
                 break;
             case 3:
-                service = new JdbcService();
-                System.out.println("You have selected JDBC as the storage.");
+                selectstorage();
+                //System.out.println("You have selected JDBC as the storage.");
                 break;
         }
     }
@@ -115,6 +120,7 @@ public class UI {
         if (authenticate(username, password)) {
             showAdminMenu();
         } else {
+            System.out.print("Wrong password");
             mainmenu();
         }
     }
@@ -194,11 +200,11 @@ public class UI {
         System.out.println("***** All Movies *****");
         System.out.println("-----------");
 
-        if (service.getMovies().isEmpty()) {
+        if (movieService.getMovies().isEmpty()) {
             System.out.println("No movies found.");
         } else {
             // using for-each loop for iteration over Map.entrySet()
-            for (Map.Entry<String, Movie> entry : service.getMovies().entrySet()) {
+            for (Map.Entry<String, Movie> entry : movieService.getMovies().entrySet()) {
                 System.out.println("(" + entry.getKey() + ") " + entry.getValue().getTitle());
             }
             System.out.println("-----------");
@@ -262,10 +268,10 @@ public class UI {
         System.out.print("Enter movie subtitle: ");
         String subtitle = scanner.nextLine();
 
-        String id = service.movienextId();
+        String id = movieService.movienextId();
 
         Movie movie = new Movie(id, title, duration, genre, subtitle);
-        service.addMovie(movie);
+        movieService.addMovie(movie);
 
         System.out.println("\n");
         System.out.println("Movie added successfully.");
@@ -302,7 +308,7 @@ public class UI {
         System.out.println("For any part you don't want to change, press Enter.");
         System.out.println("-----------");
 
-        Movie movie = service.findMovies(id);
+        Movie movie = movieService.findMovies(id);
 
         System.out.println("Current Title: " + movie.getTitle());
         System.out.print("Enter new title: ");
@@ -333,7 +339,7 @@ public class UI {
         }
 
         Movie newMovie = new Movie(id, title, duration, genre, subtitle);
-        service.updateMovie(newMovie);
+        movieService.updateMovie(newMovie);
 
         System.out.println("\n");
         System.out.println("Movie edited successfully.");
@@ -369,11 +375,17 @@ public class UI {
         System.out.println("***** Remove Movie *****");
         System.out.println("-----------");
 
-        if (service.getMovies().isEmpty()) {
+        if (movieService.getMovies().isEmpty()) {
             System.out.println("No movies found.");
+            System.out.println("Automatically back to the previous menu in 3 Seconds.");
+            try {
+                Thread.sleep(3000);
+            } catch (Exception e) {
+            }
+            showAdminMenu();
         } else {
             // using for-each loop for iteration over Map.entrySet()
-            for (Map.Entry<String, Movie> entry : service.getMovies().entrySet()) {
+            for (Map.Entry<String, Movie> entry : movieService.getMovies().entrySet()) {
                 System.out.println("(" + entry.getKey() + ") " + entry.getValue().getTitle());
             }
             System.out.println("-----------");
@@ -387,7 +399,7 @@ public class UI {
                 System.out.println("Movie id cannot be empty. Please enter again.");
                 movieId = scanner.nextLine();
             }
-            if (service.findMovie(movieId)) {
+            if (movieService.findMovie(movieId)) {
                 break;
             } else {
                 if (movieId == null || movieId.isEmpty() || movieId.isBlank()) {
@@ -400,12 +412,12 @@ public class UI {
             }
         }
 
-        Movie movie = service.findMovies(movieId);
+        Movie movie = movieService.findMovies(movieId);
 
-        if (service.checkMovieInShowtime(movieId)) {
+        if (showtimeService.checkMovieInShowtime(movieId)) {
             System.out.println("Movie is used in showtime. Cannot be removed.");
         } else {
-            service.removeMovie(movie);
+            movieService.removeMovie(movie);
             System.out.println("Movie removed successfully.");
         }
 
@@ -441,11 +453,11 @@ public class UI {
         System.out.println("***** Showtime List *****");
         System.out.println("-----------");
 
-        if (service.getShowtimes().isEmpty()) {
+        if (showtimeService.getShowtimes().isEmpty()) {
             System.out.println("No showtimes found.");
         } else {
             // using for-each loop for iteration over Map.entrySet()
-            for (Map.Entry<String, Showtime> entry : service.getShowtimes().entrySet()) {
+            for (Map.Entry<String, Showtime> entry : showtimeService.getShowtimes().entrySet()) {
                 System.out.println("(" + entry.getKey() + ") Theater " + entry.getValue().getTheater() + " [" + entry.getValue().seatsAmount() + " seat] - " + entry.getValue().getMovie().getTitle());
             }
         }
@@ -484,7 +496,7 @@ public class UI {
         System.out.println("-----------");
 
         //select movie
-        if (service.getMovies().isEmpty()) {
+        if (movieService.getMovies().isEmpty()) {
             System.out.println("No movies found.");
             System.out.println("Please add a movie first.");
             System.out.println("System: Back to the previous menu automatically in 3 Seconds.");
@@ -497,7 +509,7 @@ public class UI {
 
         } else {
             // using for-each loop for iteration over Map.entrySet()
-            for (Map.Entry<String, Movie> entry : service.getMovies().entrySet()) {
+            for (Map.Entry<String, Movie> entry : movieService.getMovies().entrySet()) {
                 System.out.println("(" + entry.getKey() + ") " + entry.getValue().getTitle());
             }
             System.out.println("\n");
@@ -511,7 +523,7 @@ public class UI {
                 System.out.println("Movie id cannot be empty. Please enter again.");
                 movieId = scanner.nextLine();
             }
-            if (service.findMovie(movieId)) {
+            if (movieService.findMovie(movieId)) {
                 break;
             } else {
                 if (movieId == null || movieId.isEmpty() || movieId.isBlank()) {
@@ -524,7 +536,7 @@ public class UI {
             }
         }
 
-        Movie movie = service.findMovies(movieId);
+        Movie movie = movieService.findMovies(movieId);
 
 
         System.out.print("Enter theater: ");
@@ -590,10 +602,10 @@ public class UI {
             }
         }
 
-        String id = service.showtimenextId();
+        String id = showtimeService.showtimenextId();
 
         Showtime showtime = new Showtime(id, theater, movie, language, time, seats);
-        service.addShowtime(showtime);
+        showtimeService.addShowtime(showtime);
 
         System.out.println("\n");
         System.out.println("Showtime added successfully.");
@@ -630,7 +642,7 @@ public class UI {
         System.out.println("For any part you don't want to change, press Enter.");
         System.out.println("-----------");
 
-        Showtime showtime = service.findShowtimes(id);
+        Showtime showtime = showtimeService.findShowtimes(id);
 
         System.out.print("Enter theater: ");
         String theater = scanner.nextLine();
@@ -651,7 +663,7 @@ public class UI {
         }
 
         Showtime newShowtime = new Showtime(id, theater, showtime.getMovie(), language, time, showtime.getSeats());
-        service.updateShowtime(newShowtime);
+        showtimeService.updateShowtime(newShowtime);
 
         System.out.println("\n");
         System.out.println("Showtime updated successfully.");
@@ -686,15 +698,31 @@ public class UI {
     public static void removeShowtime() {
         System.out.println("***** Remove Showtime *****");
         System.out.println("-----------");
+        if (showtimeService.getShowtimes().isEmpty()) {
+            System.out.println("No showtimes found.");
+            System.out.println("Automatically back to the previous menu in 3 Seconds.");
+            try {
+                Thread.sleep(3000);
+            } catch (Exception e) {
+            }
+            showAdminMenu();
+        } else {
+            // using for-each loop for iteration over Map.entrySet()
+            for (Map.Entry<String, Showtime> entry : showtimeService.getShowtimes().entrySet()) {
+                System.out.println("(" + entry.getKey() + ") Theater " + entry.getValue().getTheater() + " [" + entry.getValue().seatsAmount() + " seat] - " + entry.getValue().getMovie().getTitle());
+            }
+        }
 
-        System.out.print("Enter showtime id: ");
+        System.out.println("-----------");
+
+        System.out.print("Enter showtime id to remove: ");
         String id = scanner.nextLine();
         while (id == null || id.isEmpty() || id.isBlank()) {
             System.out.println("Showtime id cannot be empty. Please enter again.");
             id = scanner.nextLine();
         }
-        if (service.findShowtime(id)) {
-            service.removeShowtime(service.findShowtimes(id));
+        if (showtimeService.findShowtime(id)) {
+            showtimeService.removeShowtime(showtimeService.findShowtimes(id));
             System.out.println("\n");
             System.out.println("Showtime removed successfully.");
             System.out.println("\n");
@@ -733,11 +761,11 @@ public class UI {
         System.out.println("***** All Tickets *****");
         System.out.println("-----------");
 
-        if (service.getTickets().isEmpty()) {
+        if (ticketService.getTickets().isEmpty()) {
             System.out.println("No tickets found.");
         } else {
             // using for-each loop for iteration over Map.entrySet()
-            for (Map.Entry<String, Ticket> entry : service.getTickets().entrySet()) {
+            for (Map.Entry<String, Ticket> entry : ticketService.getTickets().entrySet()) {
                 System.out.println("(" + entry.getKey() + ") " + entry.getValue().getShowtime().getMovie().getTitle() + " - " + entry.getValue().getShowtime().getTime() + " - " + entry.getValue().getSeats().getSeatid());
             }
         }
@@ -756,12 +784,12 @@ public class UI {
         System.out.println("\n");
         System.out.println("***** Ticket Office *****");
         System.out.println("--------------------------");
-        if (service.getMovies().isEmpty()) {
+        if (movieService.getMovies().isEmpty()) {
             System.out.println("No movies found.");
             System.out.println("Please contact the staff.");
         } else {
             // using for-each loop for iteration over Map.entrySet()
-            for (Map.Entry<String, Movie> entry : service.getMovies().entrySet()) {
+            for (Map.Entry<String, Movie> entry : movieService.getMovies().entrySet()) {
                 System.out.println("(" + entry.getKey() + ") " + entry.getValue().getTitle());
             }
             System.out.println("--------------------------");
@@ -776,7 +804,7 @@ public class UI {
                 System.out.println("Movie id cannot be empty. Please enter again.");
                 movieId = scanner.nextLine();
             }
-            if (service.findMovie(movieId)) {
+            if (movieService.findMovie(movieId)) {
                 break;
             } else {
                 if (movieId == null || movieId.isEmpty() || movieId.isBlank()) {
@@ -796,21 +824,21 @@ public class UI {
         System.out.println("\n");
         System.out.println("\n");
         System.out.println("detail of the movie: ");
-        System.out.println(service.findMovies(movieid).getTitle());
-        System.out.println("Genre: " + service.findMovies(movieid).getGenre());
-        System.out.println("Duration: " + service.findMovies(movieid).getDuration());
-        System.out.println(service.findMovies(movieid).getSubtitle());
+        System.out.println(movieService.findMovies(movieid).getTitle());
+        System.out.println("Genre: " + movieService.findMovies(movieid).getGenre());
+        System.out.println("Duration: " + movieService.findMovies(movieid).getDuration());
+        System.out.println(movieService.findMovies(movieid).getSubtitle());
         System.out.println("--------------------------");
         System.out.println("***** Showtime of the movie *****");
         System.out.println("--------------------------");
 
-        if (service.getShowtimes().isEmpty()) {
+        if (showtimeService.getShowtimes().isEmpty()) {
             System.out.println("No showtimes found.");
             System.out.println("Please contact the staff.");
         } else {
             // using for-each loop for iteration over Map.entrySet()
-            for (Map.Entry<String, Showtime> entry : service.getShowtimes().entrySet()) {
-                if (service.equalsMovie(service.findMovies(movieid), entry.getValue().getMovie())) {
+            for (Map.Entry<String, Showtime> entry : showtimeService.getShowtimes().entrySet()) {
+                if (movieService.equalsMovie(movieService.findMovies(movieid), entry.getValue().getMovie())) {
                     System.out.println("(" + entry.getKey() + ") Theater " + entry.getValue().getTheater() + " - [" + entry.getValue().getLanguage() + "] - Time: " + entry.getValue().getTime());
                 }
             }
@@ -825,8 +853,8 @@ public class UI {
                 System.out.println("Showtime id cannot be empty. Please enter again.");
                 showtimeId = scanner.nextLine();
             }
-            if (service.findShowtime(showtimeId)) {
-                if (service.equalsMovie(service.findMovies(movieid), service.findShowtimes(showtimeId).getMovie())) {
+            if (showtimeService.findShowtime(showtimeId)) {
+                if (movieService.equalsMovie(movieService.findMovies(movieid), showtimeService.findShowtimes(showtimeId).getMovie())) {
                     break;
                 } else {
                     System.out.println("Showtime id is wrong. Please enter again.");
@@ -848,9 +876,9 @@ public class UI {
 
     public static void buyTicket(String showtimeId) {
         System.out.println("\n");
-        Map<String, Seat> seats = service.getSeats(showtimeId);
-        int rows = service.getSeatRow(showtimeId);
-        int columns = service.getSeatColumn(showtimeId);
+        Map<String, Seat> seats = showtimeService.getSeats(showtimeId);
+        int rows = showtimeService.getSeatRow(showtimeId);
+        int columns = showtimeService.getSeatColumn(showtimeId);
         System.out.println("***** All seats in the theater *****");
         System.out.println("-------------------------------------");
         for (int i = 1; i <= rows; i++) {
@@ -888,9 +916,9 @@ public class UI {
         System.out.println("\n");
         System.out.println("-------------------------------------");
         System.out.println("***** Ticket Information *****");
-        System.out.println(service.findMovies(service.findShowtimes(showtimeId).getMovie().getMovieid()).getTitle());
-        System.out.println("Theater: " + service.findShowtimes(showtimeId).getTheater());
-        System.out.println("Time: " + service.findShowtimes(showtimeId).getTime());
+        System.out.println(movieService.findMovies(showtimeService.findShowtimes(showtimeId).getMovie().getMovieid()).getTitle());
+        System.out.println("Theater: " + showtimeService.findShowtimes(showtimeId).getTheater());
+        System.out.println("Time: " + showtimeService.findShowtimes(showtimeId).getTime());
         System.out.println("Seat: " + seatId);
         System.out.println("-------------------------------------");
         System.out.println("Do you want to make a booked? (Y/N): ");
@@ -903,15 +931,15 @@ public class UI {
                 confirm = scanner.nextLine();
             }
             if (confirm.equalsIgnoreCase("Y")) {
-                Showtime showtime = service.findShowtimes(showtimeId);
-                Seat seat = service.getSeat(showtimeId, seatId);
+                Showtime showtime = showtimeService.findShowtimes(showtimeId);
+                Seat seat = showtimeService.getSeat(showtimeId, seatId);
 
                 seat.setBooked(true);
                 seats.put(seatId, seat);
 
                 Showtime updatedShowtime = new Showtime(showtimeId, showtime.getTheater(), showtime.getMovie(), showtime.getLanguage(), showtime.getTime(), seats);
-                service.updateShowtime(updatedShowtime);
-                service.createTicket(updatedShowtime, seat);
+                showtimeService.updateShowtime(updatedShowtime);
+                ticketService.createTicket(updatedShowtime, seat);
                 System.out.println("Booked successfully.");
                 break;
             } else if (confirm.equalsIgnoreCase("N")) {
