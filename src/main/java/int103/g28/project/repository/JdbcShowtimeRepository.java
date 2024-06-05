@@ -28,7 +28,7 @@ public class JdbcShowtimeRepository implements ShowtimeRepository, Serializable 
         try {
             Class.forName(JDBC_DRIVER_CLASS_NAME);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Driver not found!");
         }
         loadFromDB();
     }
