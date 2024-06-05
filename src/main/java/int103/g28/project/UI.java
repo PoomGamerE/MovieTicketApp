@@ -58,8 +58,8 @@ public class UI {
                 break;
             case 3:
                 movieService = new MovieService(new JdbcMovieRepository());
-                showtimeService = new ShowtimeService(new JdbcShowtimeRepository();
-                ticketService = new TicketService(new JdbcTicketRepository();
+                showtimeService = new ShowtimeService(new JdbcShowtimeRepository());
+                ticketService = new TicketService(new JdbcTicketRepository());
                 System.out.println("You have selected JDBC as the storage.");
                 break;
         }
