@@ -40,7 +40,7 @@ public class JdbcMovieRepository implements MovieRepository, Serializable {
         try (Connection conn = connect()) {
             // Check if tables not exist
             try (Statement stmt = conn.createStatement()) {
-                stmt.execute("CREATE TABLE IF NOT EXISTS movies (movieid VARCHAR(10) PRIMARY KEY, title VARCHAR(100), duration VARCHAR(10), genre VARCHAR(50), subtitle VARCHAR(100))");
+                stmt.execute("CREATE TABLE IF NOT EXISTS movies (movieid VARCHAR(10) PRIMARY KEY, title VARCHAR(100), duration VARCHAR(20), genre VARCHAR(50), subtitle BLOB)");
             }
 
             // Load movies
