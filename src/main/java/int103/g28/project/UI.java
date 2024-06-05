@@ -4,9 +4,7 @@ import int103.g28.project.domain.Movie;
 import int103.g28.project.domain.Seat;
 import int103.g28.project.domain.Showtime;
 import int103.g28.project.domain.Ticket;
-import int103.g28.project.repository.InMemoryMovieRepository;
-import int103.g28.project.repository.InMemoryShowtimeRepository;
-import int103.g28.project.repository.InMemoryTicketRepository;
+import int103.g28.project.repository.*;
 import int103.g28.project.service.MovieService;
 import int103.g28.project.service.ShowtimeService;
 import int103.g28.project.service.TicketService;
@@ -52,8 +50,10 @@ public class UI {
                 System.out.println("You have selected In-memory as the storage.");
                 break;
             case 2:
-                selectstorage();
-                //System.out.println("You have selected File as the storage.");
+                movieService = new MovieService(new FileMovieRepository());
+                showtimeService = new ShowtimeService(new FileShowtimeRepository());
+                ticketService = new TicketService(new FileTicketRepository());
+                System.out.println("You have selected File as the storage.");
                 break;
             case 3:
                 selectstorage();
