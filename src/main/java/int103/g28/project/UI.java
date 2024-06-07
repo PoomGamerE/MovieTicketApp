@@ -778,6 +778,26 @@ public class UI {
         System.out.println("100. Back to the previous menu.");
         System.out.println("\n");
         System.out.println("Please enter number to select: ");
+
+        int choice = 0;
+        try {
+            choice = Integer.parseInt(scanner.nextLine());
+        } catch (Exception e) {
+        }
+
+        while (choice !=99 || choice != 100) {
+            System.out.println("Invalid choice. Please enter again.");
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (Exception e) {
+            }
+        }
+
+        if (choice == 99) {
+            System.exit(0);
+        } else if (choice == 100) {
+            showAdminMenu();
+        }
     }
 
     // User Zone ---- User Zone ---- User Zone ---- User Zone ---- User Zone ---- User Zone ---- User Zone ---- User Zone ---- User Zone
