@@ -2,8 +2,6 @@ package int103.g28.project.repository;
 
 import int103.g28.project.domain.Seat;
 import int103.g28.project.domain.Showtime;
-import int103.g28.project.exception.ShowtimeAlreadyException;
-import int103.g28.project.exception.ShowtimeNotFoundException;
 
 import java.util.Map;
 

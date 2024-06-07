@@ -1,8 +1,6 @@
 package int103.g28.project.repository;
 
 import int103.g28.project.domain.Movie;
-import int103.g28.project.exception.MovieAlreadyException;
-import int103.g28.project.exception.MovieNotFoundException;
 
 import java.util.Map;
 

@@ -13,30 +13,6 @@ public class Movie implements Serializable {
 
     // Constructor
 
-    public Movie(String movieid, String title) {
-        this.movieid = movieid;
-        this.title = title;
-        this.duration = null;
-        this.genre = null;
-        this.subtitle = null;
-    }
-
-    public Movie(String movieid, String title, String duration) {
-        this.movieid = movieid;
-        this.title = title;
-        this.duration = duration;
-        this.genre = null;
-        this.subtitle = null;
-    }
-
-    public Movie(String movieid, String title, String duration, String genre) {
-        this.movieid = movieid;
-        this.title = title;
-        this.duration = duration;
-        this.genre = genre;
-        this.subtitle = null;
-    }
-
     public Movie(String movieid, String title, String duration, String genre, String subtitle) {
         this.movieid = movieid;
         this.title = title;

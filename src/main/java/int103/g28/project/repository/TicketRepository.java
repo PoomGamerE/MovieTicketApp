@@ -1,8 +1,6 @@
 package int103.g28.project.repository;
 
 import int103.g28.project.domain.Ticket;
-import int103.g28.project.exception.TicketAlreadyException;
-import int103.g28.project.exception.TicketNotFoundException;
 
 import java.util.Map;
 
